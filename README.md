@@ -65,3 +65,24 @@ func main() {
 }
 ```
 
+## Creational patterns
+
+### What are creational patterns
+
+- Manage objects creation
+- Encapsulate knowledge of the classes
+- Hide instances
+
+### Classification of creational patterns
+
+- Object creational: defer object creation to another object
+- Class creational: defer class creation to subclasses
+
+### Use cases of creational patterns
+
+- Construct different representation of complex objects
+- Hide implementation of class or object
+- Allow subclasses to alter the type of the created object
+- On instance only
+
+### Builder pattern
