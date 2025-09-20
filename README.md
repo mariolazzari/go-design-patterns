@@ -360,3 +360,193 @@ func main() {
  hybridCar.printDetails()
 }
 ```
+
+### Abstract factory method
+
+- Set of factory methods
+- Abstract class or inteface create family of related objects
+- Subclasses creates classes
+
+#### Difference between factory and abstract factory
+
+- Factory hide construction of 1 item
+- Factory uses *encapsulation* to delegate
+- Abstarct hide construction of families of item
+- Abstrunct uses *composition* to delegate
+  
+#### Abstract factory usage
+
+- Unknwn dependencies of families of item
+- Future expansion
+
+#### Abstract factory pros
+
+- Ensure all classes to work togheter
+- Loosly coupling
+- Class creation in a single place
+- No braking changes
+
+#### Abstract factory cons
+
+- More complex
+
+### Abstract factory implementation
+
+```go
+package main
+
+import "fmt"
+
+// Abstract Product  1
+type ICar interface {
+ setCarType(carType string)
+ printDetails()
+}
+
+type Car struct {
+ carType string
+}
+
+func (c *Car) setCarType(carType string) {
+ c.carType = carType
+}
+
+func (c *Car) printDetails() {
+ fmt.Printf("Car Type: %s\n", c.carType)
+}
+
+// Abstract Product  2
+type ICarDetails interface {
+ setTransmission(transmission string)
+ setEngine(engine string)
+ setGasType(gasType string)
+ printDetails()
+}
+
+type CarDetails struct {
+ transmission string
+ engine       string
+ gasType      string
+}
+
+func (cd *CarDetails) setTransmission(transmission string) {
+ cd.transmission = transmission
+}
+
+func (cd *CarDetails) setEngine(engine string) {
+ cd.engine = engine
+}
+
+func (cd *CarDetails) setGasType(gasType string) {
+ cd.gasType = gasType
+}
+
+func (cd *CarDetails) printDetails() {
+ fmt.Printf("Car Transmission: %s\n", cd.transmission)
+ fmt.Printf("Car Engine: %s\n", cd.engine)
+ fmt.Printf("Car Gas Type: %s\n", cd.gasType)
+ fmt.Println()
+}
+
+// Concrete Product A1
+type LuxuryCar struct {
+ Car
+}
+
+// Concrete Product A2
+type LuxuryCarDetails struct {
+ CarDetails
+}
+
+// Concrete Product B1
+type HybridCar struct {
+ Car
+}
+
+// Concerete Product B2
+type HybridCarDetails struct {
+ CarDetails
+}
+
+// Abstract Factory Interface
+type ICarFactory interface {
+ makeCar() ICar
+ makeCarDetails() ICarDetails
+}
+
+// Concerete Factoy 1
+
+type LuxuryCarFactory struct {
+}
+
+func (l *LuxuryCarFactory) makeCar() ICar {
+ return &LuxuryCar{
+  Car: Car{
+   carType: "Luxury",
+  },
+ }
+}
+
+func (l *LuxuryCarFactory) makeCarDetails() ICarDetails {
+ return &LuxuryCarDetails{
+  CarDetails: CarDetails{
+   transmission: "manual",
+   engine:       "gas",
+   gasType:      "premium",
+  },
+ }
+}
+
+type HybridCarFactory struct {
+}
+
+func (l *HybridCarFactory) makeCar() ICar {
+ return &HybridCar{
+  Car: Car{
+   carType: "Hybrid",
+  },
+ }
+}
+
+func (l *HybridCarFactory) makeCarDetails() ICarDetails {
+ return &HybridCarDetails{
+  CarDetails: CarDetails{
+   transmission: "automatic",
+   engine:       "hybrid",
+   gasType:      "electric",
+  },
+ }
+}
+
+// factory method
+func getCarFactory(carType string) ICarFactory {
+ if carType == "luxury" {
+  return &LuxuryCarFactory{}
+ }
+
+ if carType == "hybrid" {
+  return &HybridCarFactory{}
+ }
+
+ return nil
+}
+
+func main() {
+
+ luxuryFactory := getCarFactory("luxury")
+ hybridFactory := getCarFactory("hybrid")
+
+ // Build the luxury car
+ luxuryCar := luxuryFactory.makeCar()
+ luxuryCarDetails := luxuryFactory.makeCarDetails()
+
+ luxuryCar.printDetails()
+ luxuryCarDetails.printDetails()
+
+ hybridCar := hybridFactory.makeCar()
+ hybridCarDetails := hybridFactory.makeCarDetails()
+
+ hybridCar.printDetails()
+ hybridCarDetails.printDetails()
+}
+```
