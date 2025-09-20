@@ -550,3 +550,135 @@ func main() {
  hybridCarDetails.printDetails()
 }
 ```
+
+### Prototype pattern
+
+- Creates copy of an object without being costly
+- Object is not dependent to class code
+
+#### Prototype pattern usage
+
+- Code is not dependent on specific class
+- Reduce amount of subclasses
+- Classes initialized at runtime
+
+#### Prototype pattern pros
+
+- Two different objects not coupled
+- Remove repeated initialization
+- Avoid inheritance
+
+#### Prototype pattern cons
+
+- Complex objects are difficult to copy
+
+### Prototype pattern implementation
+
+```go
+package main
+
+import "fmt"
+
+// Prototype interface
+type Shape interface {
+ print()
+ clone() Shape
+}
+
+// Concrete prototype
+type Circle struct {
+ color string
+}
+
+func (c *Circle) print() {
+ fmt.Println(c.color + " circle")
+
+}
+
+func (c *Circle) clone() Shape {
+ fmt.Println("Cloning...")
+ return &Circle{color: c.color}
+}
+
+func main() {
+
+ greenCircle := &Circle{color: "Green"}
+ blueCircle := &Circle{color: "Blue"}
+ redCircle := &Circle{color: "Red"}
+
+ greenClone := greenCircle.clone()
+ blueClone := blueCircle.clone()
+ redClone := redCircle.clone()
+
+ greenCircle.print()
+ blueCircle.print()
+ redCircle.print()
+ greenClone.print()
+ blueClone.print()
+ redClone.print()
+
+}
+```
+
+### Singleton pattern
+
+- Single class creates an object
+- Class make sure only 1 object created
+
+#### Singleton pattern usages
+
+- Single instance
+- Global access point
+
+#### Singleton pattern pros
+
+- 1 instance only
+- Global access
+- 1 initialization first time
+
+#### Singleton pattern cons
+
+- Against signle responsability principle
+- Difficult to test
+- Special handling with multiple threads
+
+#### Singleton pattern implementation
+
+```go
+package main
+
+import (
+ "fmt"
+ "sync"
+)
+
+var lock = &sync.Mutex{}
+
+type Database struct {
+}
+
+var database *Database
+
+func getInstance() *Database {
+ if database == nil {
+  lock.Lock()
+  defer lock.Unlock()
+  if database == nil {
+   fmt.Println("Creating a single database")
+   database = &Database{}
+  } else {
+   fmt.Println("Database has already been created")
+  }
+ } else {
+  fmt.Println("Database has already been created")
+ }
+ return database
+
+}
+
+func main() {
+ for range 5 {
+  getInstance()
+ }
+}
+```
