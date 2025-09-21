@@ -17,7 +17,7 @@
 - Structural
 - Behavioral
 
-#### Creational pattern
+#### Creational patterns
 
 - Provide interface for creating objects
 - Construct complex objects
@@ -65,7 +65,7 @@ func main() {
 }
 ```
 
-## Creational patterns
+## Creational design patterns
 
 ### What are creational patterns
 
@@ -682,3 +682,107 @@ func main() {
  }
 }
 ```
+
+## Structural design patterns
+
+### What are structural patterns?
+
+- Descrobe how classes and objects are combined
+- Simplify structure with relations
+- More extensibility and flexibility
+
+### Structural patterns use cases
+
+- Allow incompatible interfaces to collaborate
+- Compese objects in tree strcture
+- Attach new behaviors to objects
+- Create simple interfaces
+
+### Adapter pattern
+
+- Bridge between 2 incopatible objects
+- Single itnerface to join features
+- Both sides are unaware about adapted
+
+#### Adapter pattern usage
+
+- Use a specific class incompatible to the rest of code
+- Reuse subclasses with missing features
+  
+#### Adapter pattern types
+
+- Class
+- Object
+
+#### Adapter pattern pros
+
+- Single responsibility principle
+- Open-closed principle
+
+#### Adapter pattern cons
+
+- Complex due lots of interfaces and classes
+
+### Adapter pattern implementation
+
+```go
+package main 
+import "fmt"
+
+// Client
+type Publisher struct {
+}
+
+func (p *Publisher) publishContentOnPlatform(platform Platform) {
+    fmt.Println("Publisher is ready to publish your content.")
+    platform.postMedia()
+}
+
+//Client Interface
+type Platform interface {
+    postMedia()
+}
+
+// Compatible Service
+type Instagram struct {
+}
+
+func (i *Instagram) postMedia() {
+    fmt.Println("Instagram has published your post.")
+}
+
+// Incompatible Service
+type TikTok struct {
+}
+
+func (t *TikTok) scheduleMedia() {
+    fmt.Println("TikTok is ready to schedule your post.")
+}
+
+// Adapter
+type TikTokAdapter struct {
+    tikTok *TikTok
+}
+
+func (t *TikTokAdapter) postMedia() {
+   t.tikTok.scheduleMedia()
+   fmt.Println("Adapter has posted the TikTok content.")
+}
+
+func main() {
+
+    publisher := &Publisher{}
+    instagram := &Instagram{}
+
+    publisher.publishContentOnPlatform(instagram)
+
+    tikTok := &TikTok{}
+    tikTokAdapter := &TikTokAdapter{
+        tikTok: tikTok,
+    }
+
+    publisher.publishContentOnPlatform(tikTokAdapter)
+}
+```
+
+### Composite pattern
