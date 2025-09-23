@@ -866,7 +866,7 @@ func main() {
 
 #### Decorator Pattern usage
 
-- Assign additional functionalities 
+- Assign additional functionalities
 - Difficult extension with inheritance
 
 #### Decorator pattern pros
@@ -1040,5 +1040,110 @@ func main() {
  publisher.postToInstagram()
  publisher.postToTikTok()
  publisher.postToTwitter()
+}
+```
+
+## Behavioral design patterns
+
+### What are behavioral patterns
+
+- Focus on algorithms
+- Common communication patterns
+
+#### Behavioral patterns usage
+
+- Traversing collection elements
+- Reducing dependencies
+- Altering behaviors
+- Groups of algorithms
+
+### Iterator pattern
+
+- Traerse elements of a collection
+- Hide collection implementation
+
+### Iterator pattern usage
+
+- Hide complexity
+- Reduce duplicate code
+- Traverse unknown collection structure
+
+### Iterator pattern pros
+
+- Single responsbility
+- Open-closed principle
+
+### Iterator pattern cons
+
+- Simple collecitons only
+- Leff efficent
+
+### Iterator pattern implementation
+
+```go
+package main
+
+import (
+ "fmt"
+)
+
+// Iterator Interface
+type Iterator interface {
+ hasNext() bool
+ next() interface{}
+}
+
+// Collection Interface
+type Collection interface {
+ getIterator() Iterator
+}
+
+type IceCreamFlavor struct {
+ name string
+}
+
+// Concrete Iterator
+type IceCreamIterator struct {
+ flavors []IceCreamFlavor
+ current int
+}
+
+func (i *IceCreamIterator) hasNext() bool {
+ return i.current < len(i.flavors)
+}
+
+func (i *IceCreamIterator) next() interface{} {
+
+ flavor := i.flavors[i.current]
+ i.current++
+ return flavor
+}
+
+// Concrete Collection
+type IceCreamShop struct {
+ flavors []IceCreamFlavor
+}
+
+func (s *IceCreamShop) getIterator() Iterator {
+ return &IceCreamIterator{
+  flavors: s.flavors,
+ }
+}
+
+func main() {
+ shop := &IceCreamShop{
+  flavors: []IceCreamFlavor{
+   {"Chocolate"},
+   {"Vanilla"},
+   {"Pistachio"},
+   {"Cookies & Cream"},
+  },
+ }
+
+ iterator := shop.getIterator()
+ for iterator.hasNext() {
+  flavor := iterator.next().(IceCreamFlavor)
+  fmt.Printf("%s\n", flavor.name)
+ }
 }
 ```
