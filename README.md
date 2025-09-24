@@ -1546,3 +1546,188 @@ func main() {
  upsPackage.deliver()
 }
 ```
+
+### Observer design pattern
+
+- Object (subject) mantains a list of dependents (observers)
+- Notifies them on state changes
+
+#### Observer design pattern usages
+
+- State change of one objects affects others
+- Some objects observe others
+
+#### Observer design pattern pros
+
+- Open-closed
+- Runtime relations
+
+#### Observer design pattern cons
+
+- Subscribers notified randomly
+
+#### Observer design pattern implementation
+
+```go
+package main
+
+import (
+ "fmt"
+)
+
+// Observer Interface
+type Observer interface {
+ Update(media []string)
+}
+
+// Subject
+type MediaLibrary struct {
+ media     []string
+ observers []Observer
+}
+
+func (m *MediaLibrary) AddMedia(media string) {
+ m.media = append(m.media, media)
+ m.Notify()
+}
+
+func (m *MediaLibrary) Attach(observer Observer) {
+ m.observers = append(m.observers, observer)
+}
+
+func (m *MediaLibrary) Detach(observer Observer) {
+ for i, o := range m.observers {
+  if o == observer {
+   m.observers = append(m.observers[:i], m.observers[i+1:]...)
+   break
+  }
+ }
+}
+
+func (m *MediaLibrary) Notify() {
+ for _, o := range m.observers {
+  o.Update(m.media)
+ }
+}
+
+// Concrete Observer
+type MediaPlayer struct{}
+
+func (m *MediaPlayer) Update(media []string) {
+ fmt.Printf("Playing media file: %s\n", media[len(media)-1])
+}
+
+func main() {
+ library := &MediaLibrary{}
+ player1 := &MediaPlayer{}
+ player2 := &MediaPlayer{}
+
+ library.Attach(player1)
+ library.AddMedia("video.mp4")
+ library.AddMedia("audio.mp3")
+
+ library.Detach(player1)
+
+ library.Attach(player2)
+ library.AddMedia("video2.mp4")
+ library.AddMedia("audio2.mp4")
+}
+```
+
+### Strategy design pattern
+
+- Families of algorithms
+- One class per algorithm
+- Makes objects interchangeble
+
+#### Strategy design pattern usages
+
+- Alter behavior at runtime
+- Similar classes
+- Isolate business logic
+
+#### Strategy design pattern pors
+
+- Open-closed
+- Swap algorithms at runtime
+- Isolate implementation
+- Composition over inheritance
+
+#### Strategy design pattern cons
+
+- Hide different strategies
+- Complicated code
+
+#### Strategy design pattern implementation
+
+```go
+package main
+
+import (
+ "fmt"
+)
+
+// Object Interface
+type Animal interface {
+ MakeSound() string
+}
+
+type Cat struct{}
+
+func (c *Cat) MakeSound() string {
+ return "Meow"
+}
+
+type Dog struct{}
+
+func (d *Dog) MakeSound() string {
+ return "Woof"
+}
+
+// Strategy Interface
+type Strategy interface {
+ Execute() string
+}
+
+// Concrete Strategy A
+type SpeakStrategy struct {
+ animal Animal
+}
+
+func (s *SpeakStrategy) Execute() string {
+ return s.animal.MakeSound()
+}
+
+// Concrete Strategy B
+type BarkStrategy struct {
+ animal Animal
+}
+
+func (s *BarkStrategy) Execute() string {
+ return s.animal.MakeSound()
+}
+
+// Context
+type Context struct {
+ strategy Strategy
+}
+
+func (c *Context) ExecuteStrategy() string {
+ return c.strategy.Execute()
+}
+
+func main() {
+ cat := &Cat{}
+ dog := &Dog{}
+
+ speakStrategy := &SpeakStrategy{animal: cat}
+ barkStrategy := &SpeakStrategy{animal: dog}
+
+ context := &Context{strategy: speakStrategy}
+ fmt.Println(context.ExecuteStrategy())
+
+ context.strategy = barkStrategy
+ fmt.Println(context.ExecuteStrategy())
+
+}
+```
