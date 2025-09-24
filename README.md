@@ -1154,22 +1154,22 @@ func main() {
 - Behavior depending on object state
 - Object appears to cheange its class
 
-### State pattern usage
+#### State pattern usage
 
 - Different behavior depending on state
 - Lots of conditions in class
 - Duplicate code
 
-### State pattern pros
+#### State pattern pros
 
 - Single responsibility
 - Open-closed principle
 
-### State pattern cons
+#### State pattern cons
 
 - Too much for fewer states
 
-### State pattern implementation
+#### State pattern implementation
 
 ```go
 package main
@@ -1237,5 +1237,178 @@ func main() {
  rectangle.draw()
  rectangle.erase()
 
+}
+```
+
+### Template method pattern
+
+- Skeleton on an algorithm in abstract class
+- Subclasses override methods without changing the structure
+
+#### Template method pattern usage
+
+- Extends only particular parts of an algorithm
+- Several classes with almost identical algorithms
+
+#### Template method pattern pros
+
+- Easy
+- For frameworks
+- Avoid duplication
+
+#### Template method pattern cons
+
+- Hard to mantain
+- Client side only
+
+#### Template method pattern implementation
+
+```go
+package main
+
+import (
+ "fmt"
+)
+
+// Interface
+type ICar interface {
+ StartEngine()
+ StopEngine()
+ Drive()
+}
+
+// Abstract Class
+type Car struct {
+ icar ICar
+}
+
+func (ac *Car) StartEngine() {
+ fmt.Println("Starting engine")
+}
+
+func (ac *Car) StopEngine() {
+ fmt.Println("Stopping engine")
+}
+
+// Template Method
+func (c *Car) Run() {
+ c.icar.StartEngine()
+ c.icar.Drive()
+ c.icar.StopEngine()
+}
+
+type Sedan struct {
+ Car
+}
+
+func (s *Sedan) Drive() {
+ fmt.Println("Driving a sedan")
+}
+
+type SUV struct {
+ Car
+}
+
+func (s *SUV) Drive() {
+ fmt.Println("Driving an SUV")
+}
+
+func main() {
+
+ sedan := Car{&Sedan{}}
+ sedan.Run()
+ fmt.Println()
+ suv := Car{&SUV{}}
+ suv.Run()
+}
+```
+
+### Command design pattern
+
+- Object encapsulates request information
+- Performs on trigger event
+
+#### Command design pattern usages
+
+- Pass method as parameter
+- Schedule events
+- Reversible operations
+
+#### Command design pattern pros
+
+- Single responsibility
+- Open-closed
+- Fexibility
+
+#### Command design pattern cons
+
+- More complicated
+
+
+#### Command design pattern implementation
+
+```go
+package main
+
+import (
+ "fmt"
+)
+
+type Train struct {
+ name       string
+ location   string
+ passengers []string
+}
+
+// Command Interface
+type Command interface {
+ Execute(*Train)
+}
+
+// Concrete Command 1
+type AddPassengerCommand struct {
+ passenger string
+}
+
+func (c *AddPassengerCommand) Execute(train *Train) {
+ train.passengers = append(train.passengers, c.passenger)
+ fmt.Println("New passenger on board: " + c.passenger)
+}
+
+// Concrete Command 2
+type MoveTrainCommand struct {
+ location string
+}
+
+func (c *MoveTrainCommand) Execute(train *Train) {
+ train.location = c.location
+ fmt.Println("The train is located at: " + train.location)
+}
+
+// Invoker
+type Invoker struct {
+ command Command
+}
+
+func (i *Invoker) ExecuteCommand(train *Train) {
+ i.command.Execute(train)
+}
+
+func main() {
+ train := &Train{
+  name:       "Express",
+  location:   "Location A",
+  passengers: []string{},
+ }
+
+ addPassangerCommand := &AddPassengerCommand{passenger: "Alice"}
+ moveTrainCommand := &MoveTrainCommand{location: "Station B"}
+
+ invoker := &Invoker{}
+ invoker.command = addPassangerCommand
+ invoker.ExecuteCommand(train)
+
+ invoker.command = moveTrainCommand
+ invoker.ExecuteCommand(train)
 }
 ```
